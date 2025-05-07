@@ -34,6 +34,10 @@
 		<SingleRecord data={itemData}>
 			{#snippet child(data)}
 				{@render item(data, async () => {
+					if (!itemData.cid) {
+						allRecords = allRecords.filter((record) => record.uri !== itemData.uri);
+						return;
+					}
 					const { rkey } = parseUri(itemData.uri as string);
 					await deleteRecord({ did, collection, rkey });
 

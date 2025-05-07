@@ -30,14 +30,14 @@
 
 	<PlainTextItem collection="dev.flo-bit.about" rkey="test" key="about" {data} placeholder="Write something about yourself..." />
 
-	<div class="relative flex flex-col gap-4">
+	<div class="relative flex flex-col gap-16">
 		<List collection="link.flo-bit.dev">
 			{#snippet item(data, deleteItem)}
 				<Link {data} {deleteItem} />
 			{/snippet}
 
 			{#snippet addItem(add)}
-				<button class="absolute right-0 bottom-0" onclick={add}>Add</button>
+				<button class="absolute left-0 -bottom-12" onclick={add}>Add</button>
 			{/snippet}
 		</List>
 	</div>
