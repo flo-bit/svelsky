@@ -5,19 +5,21 @@
 		key,
 		data,
 		placeholder,
-		defaultContent
+		defaultContent,
+		class: className
 	}: {
 		key: string;
 		data: Record<string, any>;
 		placeholder?: string;
 		defaultContent?: string;
+		class?: string;
 	} = $props();
 </script>
 
 {#if getContext('isEditing')}
 	{#await import('./PlainTextEditor.svelte') then { default: PlainTextEditor }}
-		<PlainTextEditor {key} {data} {placeholder} {defaultContent} />
+		<PlainTextEditor class={className} {key} {data} {placeholder} {defaultContent} />
 	{/await}
 {:else}
-	<div>{data[key] || defaultContent || placeholder}</div>
+	<div class={className}>{data[key] || defaultContent || placeholder}</div>
 {/if}

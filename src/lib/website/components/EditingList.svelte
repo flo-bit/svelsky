@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getContext, type Snippet } from 'svelte';
-	import SingleRecord from './SingleRecord.svelte';
+	import SingleRecord from './EditSingleRecord.svelte';
 	import { TID } from '@atproto/common-web';
-	import type { Record } from '@atproto/api/dist/client/types/com/atproto/lexicon/schema';
+	import type { Record } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
 	import { deleteRecord } from '$lib/oauth/atproto';
-	import { parseUri } from './data';
+	import { parseUri } from '../data';
 
 	let {
 		records,
@@ -23,8 +23,6 @@
 	let allRecords = $state(records);
 
 	const did = getContext('did') as string;
-
-	$inspect(allRecords);
 </script>
 
 {#if allRecords.length === 0 && empty}
@@ -49,10 +47,10 @@
 {/if}
 
 {@render addItem?.(() => {
-	console.log('clicked');
 	const rkey = TID.nextStr();
 
 	allRecords.push({
+		cid: '',
 		uri: 'at://' + did + '/' + collection + '/' + rkey,
 		value: {}
 	});

@@ -2,7 +2,7 @@
 	import '../app.css';
 
 	import { onMount } from 'svelte';
-	import { initClient, LoginModal } from '$lib/oauth';
+	import { initClient } from '$lib/oauth';
 
 	let { children } = $props();
 
@@ -12,5 +12,3 @@
 </script>
 
 {@render children()}
-
-<LoginModal />

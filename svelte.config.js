@@ -10,7 +10,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		paths: {
-			base: process.env.NODE_ENV === 'development' ? '' : '/svelte-atproto-client-oauth'
+			base: process.env.NODE_ENV === 'development' ? '' : '/editable-website-test'
 		}
 	}
 };

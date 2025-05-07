@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { getContext, setContext, type Snippet } from 'svelte';
-	import { parseUri } from './data';
-	import type { UpdateFunction, UpdateRecordFunction } from './context';
+	import { onDestroy, onMount, setContext, type Snippet } from 'svelte';
+	import { getUpdateFunctions, parseUri, type UpdateRecordFunction } from '../data';
 	import { putRecord } from '$lib/oauth/atproto';
 
 	let {
@@ -13,10 +12,9 @@
 	} = $props();
 
 	let updateRecordFunctions: UpdateRecordFunction[] = $state([]);
-	setContext('updateRecord', updateRecordFunctions);
+	setContext('updateRecordFunctions', updateRecordFunctions);
 
-	const updateFunctions = getContext('updateFunctions') as UpdateFunction[];
-
+	const updateFunctions = getUpdateFunctions();
 	const update = async () => {
 		const updated: Record<string, any> = {};
 		
@@ -28,8 +26,12 @@
 			}
 		}
 
-		if (Object.keys(updated).length > 0) {
+		if (Object.keys(updated).length > 0 || !data.cid) {
+			if(!data.value.createdAt) {
+				data.value.createdAt = new Date().toISOString();
+			}
 			data.value.updatedAt = new Date().toISOString();
+
 			const { collection, rkey } = parseUri(data.uri);
 			await putRecord({ collection, rkey, record: data.value });
 			return true;
@@ -38,9 +40,12 @@
 		return false;
 	};
 
-	if (updateFunctions) {
+	onMount(() => {
 		updateFunctions.push(update);
-	}
+	});
+	onDestroy(() => {
+		updateFunctions.splice(updateFunctions.indexOf(update), 1);
+	});
 </script>
 
 {@render child(data.value)}

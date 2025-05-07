@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, hasContext, type Snippet } from 'svelte';
-	import type { Collection } from './data';
+	import { getData, type ListCollections } from '../data';
 	import { listRecords } from '$lib/oauth/atproto';
 	import EditingList from './EditingList.svelte';
 
@@ -10,13 +10,13 @@
 		addItem,
 		empty
 	}: {
-		collection: Collection;
+		collection: ListCollections;
 		item: Snippet<[any, any]>;
 		addItem: Snippet<[any]>;
 		empty?: Snippet;
 	} = $props();
 
-	let data = getContext('data') as Record<string, unknown>;
+	const data = getData();
 	const did = getContext('did') as string;
 </script>
 
@@ -26,12 +26,10 @@
 	{:catch error}
 		{error}
 	{/await}
+{:else if !data[collection] || (data[collection] as unknown[]).length === 0}
+	{@render empty?.()}
 {:else}
 	{#each data[collection] as itemData}
 		{@render item(itemData.value, () => {})}
 	{/each}
-
-	{#if (!data[collection] || (data[collection] as any[]).length === 0) && empty}
-		{@render empty()}
-	{/if}
 {/if}

@@ -24,6 +24,7 @@ jobs:
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
+          PUBLIC_HANDLE: 'flo-bit.dev'
         run: |
           npm run build
 

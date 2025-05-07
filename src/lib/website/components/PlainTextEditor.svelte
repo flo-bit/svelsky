@@ -1,21 +1,18 @@
 <script lang="ts">
-	import { getContext, onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Editor, type Extensions } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import type { UpdateRecordFunction } from './context';
 	import Placeholder from '@tiptap/extension-placeholder';
-	import Paragraph from '@tiptap/extension-paragraph'
-	import Document from '@tiptap/extension-document'
-	import Text from '@tiptap/extension-text'
+	import Paragraph from '@tiptap/extension-paragraph';
+	import Document from '@tiptap/extension-document';
+	import Text from '@tiptap/extension-text';
+	import { getUpdateRecordFunctions } from '../data';
 
 	let element: HTMLElement | undefined = $state();
 	let editor: Editor | null = $state(null);
 
 	let edited = $state(false);
 
-	const updateFunctions = getContext('updateRecord') as UpdateRecordFunction[];
-
-	let updated = $state(false);
+	const updateFunctions = getUpdateRecordFunctions();
 
 	let {
 		key,
@@ -32,14 +29,13 @@
 	} = $props();
 
 	const update = async () => {
-		if(updated) {
-			updated = false;
-			console.log('update', key, editor?.getText());
-			return {
-				[key]: editor?.getText() ?? ''
-			}
-		}
-		return {};
+		if (!edited || !editor) return {};
+
+		edited = false;
+
+		return {
+			[key]: editor.getText()
+		};
 	};
 
 	onMount(async () => {
@@ -47,13 +43,9 @@
 
 		updateFunctions.push(update);
 
-		let extensions: Extensions = [
-			Document.configure(),
-			Paragraph.configure(),
-			Text.configure(),
-		];
+		let extensions: Extensions = [Document.configure(), Paragraph.configure(), Text.configure()];
 
-		if(placeholder) {
+		if (placeholder) {
 			extensions.push(
 				Placeholder.configure({
 					placeholder: placeholder
@@ -69,8 +61,6 @@
 			},
 			onUpdate: () => {
 				edited = true;
-
-				updated = true;
 			},
 
 			content: data[key] ?? defaultContent,
@@ -93,7 +83,7 @@
 </script>
 
 <div class={className} bind:this={element}></div>
-	
+
 <style>
 	:global(.tiptap p.is-editor-empty:first-child::before) {
 		color: var(--color-base-800);

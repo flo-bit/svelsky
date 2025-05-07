@@ -1,23 +1,21 @@
 <script lang="ts">
-	import type { UpdateFunction } from '$lib/website/context.js';
-	import Website from '$lib/website/Website.svelte';
+	import Website from '$lib/Website.svelte';
 	import { setContext } from 'svelte';
 	import { BlueskyLogin } from '@fuxui/social';
 	import { client, login } from '$lib/oauth/auth.svelte.js';
 	import { Button } from '@fuxui/base';
-
-	setContext('isEditing', true);
-
-	setContext('did', 'did:plc:257wekqxg4hyapkq6k47igmp');
+	import type { UpdateFunction } from '$lib/website/data.js';
 
 	let updateFunctions: UpdateFunction[] = $state([]);
 
-	setContext('updateFunctions', updateFunctions);
-
 	let { data } = $props();
+
+	setContext('isEditing', true);
+	setContext('did', data.did);
+	setContext('updateFunctions', updateFunctions);
 </script>
 
-<Website {data} />
+<Website />
 
 <Button
 	class="absolute right-2 bottom-2"
@@ -31,7 +29,7 @@
 </Button>
 
 {#if !client.isInitializing && !client.isLoggedIn}
-	<div class="absolute right-0 bottom-0">
+	<div class="absolute left-2 bottom-2">
 		<BlueskyLogin
 			login={async (handle) => {
 				await login(handle);

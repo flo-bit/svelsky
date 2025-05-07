@@ -1,10 +1,11 @@
 <script>
-	import Website from "$lib/website/Website.svelte";
+	import Website from "$lib/Website.svelte";
 	import { setContext } from "svelte";
 
-	setContext('did', 'did:plc:257wekqxg4hyapkq6k47igmp');
-
 	let { data } = $props();
+
+	setContext('did', data.did);
+	setContext('data', data.data);
 </script>
 
-<Website {data} />
+<Website />

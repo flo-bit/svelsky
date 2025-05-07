@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { getContext, onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Editor, type Content, type Extensions } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import Image from '@tiptap/extension-image';
 	import Placeholder from '@tiptap/extension-placeholder';
 	import Link from '@tiptap/extension-link';
 	import { Prose } from '@fuxui/base';
-	import { getRecord, putRecord } from '$lib/oauth/atproto';
 	import { marked } from 'marked';
 	import { generateJSON } from '@tiptap/core';
-	import type { UpdateFunction } from './context';
 	import TurndownService from 'turndown';
-	import { client } from '$lib/oauth';
 	import { RichTextLink } from './extensions/RichTextLink';
+	import { getUpdateRecordFunctions } from '../data';
 
 	let element: HTMLElement | undefined = $state();
 	let editor: Editor | null = $state(null);
@@ -20,35 +18,29 @@
 	let loaded = $state(false);
 
 	let edited = $state(false);
-
-	let record: Awaited<ReturnType<typeof getRecord>>;
-
-	let { collection, rkey, key, defaultContent, placeholder }: {
-		collection: string;
-		rkey: string;
+		
+	let {
+		key,
+		data,
+		class: className,
+		placeholder = '',
+		defaultContent = ''
+	}: {
 		key: string;
-		defaultContent?: string;
+		data: Record<string, any>;
+		class?: string;
 		placeholder?: string;
+		defaultContent?: string;
 	} = $props();
 
-	const updateFunctions = getContext('updateFunctions') as UpdateFunction[];
-
-	const did = getContext('did') as string;
+	const updateFunctions = getUpdateRecordFunctions();
 
 	const update = async () => {
-		console.log('update');
+		if (!edited || !editor) return {};
 
-		if (!edited) {
-			console.log('not updating, because not edited');
-			return false;
-		}
+		edited = false;
 
-		const html = editor?.getHTML();
-
-		if (!html) {
-			console.log('not updating, because no html');
-			return false;
-		}
+		const html = editor.getHTML();
 
 		var turndownService = new TurndownService({
 			headingStyle: 'atx',
@@ -56,24 +48,11 @@
 		});
 		const markdown = turndownService.turndown(html);
 
-		console.log(markdown);
+		edited = false;
 
-		if (!client.profile || client.profile.did !== did) {
-			console.log('not updating, because not authorized');
-			return false;
-		}
-
-		await putRecord({
-			collection,
-			rkey,
-			record: {
-				...record?.value,
-				[key]: markdown,
-				updatedAt: new Date().toISOString()
-			}
-		});
-
-		return true;
+		return {
+			[key]: markdown
+		};
 	};
 
 	onMount(async () => {
@@ -82,11 +61,7 @@
 		let json: Content = defaultContent ?? '';
 
 		try {
-			record = await getRecord({ did, collection, rkey });
-
-			console.log(record);
-			// parse to html
-			let html = await marked.parse(record.value[key] as string);
+			let html = await marked.parse(data[key] as string);
 
 			// parse to json
 			json = generateJSON(html, [
@@ -148,7 +123,7 @@
 	});
 </script>
 
-<Prose>
+<Prose class={className}>
 	<div bind:this={element}></div>
 </Prose>
 
