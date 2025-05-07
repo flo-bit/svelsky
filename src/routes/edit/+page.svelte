@@ -23,9 +23,7 @@
 	class="absolute right-2 bottom-2"
 	onclick={() => {
 		for (const updateFunction of updateFunctions) {
-			if (updateFunction()) {
-				console.log('updated');
-			}
+			updateFunction();
 		}
 	}}
 >

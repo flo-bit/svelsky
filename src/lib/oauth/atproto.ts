@@ -90,6 +90,16 @@ export async function putRecord({
 }) {
 	if (!client.profile || !client.rpc) throw new Error('No profile or rpc');
 
+	console.log('updating record', {
+		data: {
+			collection,
+			repo: client.profile.did,
+			rkey,
+			record: {
+				...record
+			}
+		}
+	});
 	const response = await client.rpc.call('com.atproto.repo.putRecord', {
 		data: {
 			collection,
@@ -98,6 +108,28 @@ export async function putRecord({
 			record: {
 				...record
 			}
+		}
+	});
+
+	return response;
+}
+
+export async function deleteRecord({
+	did,
+	collection,
+	rkey
+}: {
+	did: string;
+	collection: string;
+	rkey: string;
+}) {
+	if (!client.profile || !client.rpc) throw new Error('No profile or rpc');
+
+	const response = await client.rpc.call('com.atproto.repo.deleteRecord', {
+		data: {
+			collection,
+			repo: did,
+			rkey
 		}
 	});
 

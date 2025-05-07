@@ -14,7 +14,6 @@ export async function load() {
 
 	const downloadedData = {} as DownloadedData;
 
-	// 3️⃣ Narrow Object.keys back to your Collection union
 	for (const collection of Object.keys(data) as Collection[]) {
 		const cfg = data[collection];
 

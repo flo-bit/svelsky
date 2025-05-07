@@ -1,66 +1,46 @@
 <script lang="ts">
-	import { getContext, hasContext, type Snippet } from 'svelte';
-	import type { Collection } from './data';
-	import { data as recordData } from './data';
-	import type { UpdateFunction } from './context';
-
-	type ArrayCollections = {
-		[K in Collection]: (typeof recordData)[K] extends readonly any[] ? K : never;
-	}[Collection];
-
-	type ElementType<C extends Collection> = (typeof recordData)[C] extends readonly (infer U)[]
-		? U
-		: any;
-
-	type Props =
-		| {
-				collection: ArrayCollections;
-				rkey?: ElementType<ArrayCollections>;
-				data: Record<string, any>;
-				key: string;
-				placeholder?: string;
-				defaultContent?: string;
-
-				editing: Snippet<[any, any]>;
-				view: Snippet<[any]>;
-		  }
-		| {
-				collection: Exclude<Collection, ArrayCollections>;
-				rkey: ElementType<Exclude<Collection, ArrayCollections>>;
-				data: Record<string, any>;
-				key: string;
-				placeholder?: string;
-				defaultContent?: string;
-
-				editing: Snippet<[any, any]>;
-				view: Snippet<[any]>;
-		  };
+	import { getContext, setContext, type Snippet } from 'svelte';
+	import { parseUri } from './data';
+	import type { UpdateFunction, UpdateRecordFunction } from './context';
+	import { putRecord } from '$lib/oauth/atproto';
 
 	let {
 		data,
-		editing,
-		view
-	}: Props = $props();
+		child
+	}: {
+		data: Record<string, any>;
+		child: Snippet<[any]>;
+	} = $props();
+
+	let updateRecordFunctions: UpdateRecordFunction[] = $state([]);
+	setContext('updateRecord', updateRecordFunctions);
 
 	const updateFunctions = getContext('updateFunctions') as UpdateFunction[];
 
 	const update = async () => {
-		console.log('update', data);
-		return true;
+		const updated: Record<string, any> = {};
+		
+		for (const updateFunction of updateRecordFunctions) {
+			const updatedPart = await updateFunction();
+			for (const key in updatedPart) {
+				updated[key] = updatedPart[key];
+				data.value[key] = updatedPart[key];
+			}
+		}
+
+		if (Object.keys(updated).length > 0) {
+			data.value.updatedAt = new Date().toISOString();
+			const { collection, rkey } = parseUri(data.uri);
+			await putRecord({ collection, rkey, record: data.value });
+			return true;
+		}
+
+		return false;
 	};
 
-	if(updateFunctions) {
+	if (updateFunctions) {
 		updateFunctions.push(update);
-	}
-
-	function willUpdate() {
-		console.log('willUpdate', data);
-		return true;
 	}
 </script>
 
-{#if hasContext('isEditing')}
-	{@render editing(data.value, willUpdate)}
-{:else}
-	{@render view(data.value)}
-{/if}
+{@render child(data.value)}

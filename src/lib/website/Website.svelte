@@ -4,10 +4,14 @@
 	import MarkdownText from './MarkdownText.svelte';
 	import SingleRecord from './SingleRecord.svelte';
 	import Test from './Test.svelte';
+	import PlainText from './PlainText.svelte';
+	import { setContext } from 'svelte';
+	import Link from './Link.svelte';
+	import PlainTextItem from './PlainTextItem.svelte';
 
 	let { data } = $props();
 
-	console.log(data);
+	setContext('data', data);
 </script>
 
 <div class="mx-auto max-w-2xl py-16">
@@ -24,25 +28,33 @@
 		defaultContent="Hello there"
 	/> -->
 
-	<div class="flex flex-col gap-4">
-		<List collection="link.flo-bit.dev" {data}>
-			{#snippet item(item)}
-				<SingleRecord data={item}>
-					{#snippet editing(data)}
-						<div class="flex flex-col gap-2">
-							<Input type="text" bind:value={data.label} />
-							<Input type="text" bind:value={data.description} />
-						</div>
-					{/snippet}
+	<PlainTextItem collection="dev.flo-bit.about" rkey="test" key="about" {data} placeholder="Write something about yourself..." />
 
-					{#snippet view(data)}
-						<div class="flex flex-col gap-2">
-							<div class="text-lg font-bold">{data.label}</div>
-							<div>{data.description}</div>
-						</div>
-					{/snippet}
-				</SingleRecord>
+	<div class="relative flex flex-col gap-4">
+		<List collection="link.flo-bit.dev">
+			{#snippet item(data, deleteItem)}
+				<Link {data} {deleteItem} />
+			{/snippet}
+
+			{#snippet addItem(add)}
+				<button class="absolute right-0 bottom-0" onclick={add}>Add</button>
 			{/snippet}
 		</List>
 	</div>
+	<!--
+	<div class="relative flex flex-col gap-4 mt-8">
+		<List collection="link.flo-bit.test">
+			{#snippet item(data, deleteItem)}
+				<Link {data} {deleteItem} />
+			{/snippet}
+
+			{#snippet addItem(add)}
+				<button class="absolute right-0 bottom-0" onclick={add}>Add</button>
+			{/snippet}
+
+			{#snippet empty()}
+				<div>Empty list</div>
+			{/snippet}
+		</List>
+	</div> -->
 </div>
