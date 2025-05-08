@@ -28,7 +28,9 @@
 </SingleRecord>
 
 <ThemeWrapper>
-	<GithubCorner href="https://github.com/flo-bit/svelsky" />
+	{#if !hasContext('isEditing')}
+		<GithubCorner href="https://github.com/flo-bit/svelsky" />
+	{/if}
 
 	<div class={['mx-auto my-16 max-w-2xl px-4']}>
 		<SingleRecord collection="dev.flo-bit.about" rkey="test">
