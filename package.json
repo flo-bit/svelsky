@@ -38,6 +38,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@atcute/client": "^3.1.0",
 		"@atcute/oauth-browser-client": "^1.0.13",
 		"@atproto/api": "^0.15.6",
 		"@atproto/common-web": "^0.4.2",
