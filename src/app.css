@@ -48,17 +48,17 @@
 		--accent-900: var(--color-pink-900);
 		--accent-950: var(--color-pink-950);
 
-		--base-50: var(--color-gray-50);
-		--base-100: var(--color-gray-100);
-		--base-200: var(--color-gray-200);
-		--base-300: var(--color-gray-300);
-		--base-400: var(--color-gray-400);
-		--base-500: var(--color-gray-500);
-		--base-600: var(--color-gray-600);
-		--base-700: var(--color-gray-700);
-		--base-800: var(--color-gray-800);
-		--base-900: var(--color-gray-900);
-		--base-950: var(--color-gray-950);
+		--base-50: var(--color-neutral-50);
+		--base-100: var(--color-neutral-100);
+		--base-200: var(--color-neutral-200);
+		--base-300: var(--color-neutral-300);
+		--base-400: var(--color-neutral-400);
+		--base-500: var(--color-neutral-500);
+		--base-600: var(--color-neutral-600);
+		--base-700: var(--color-neutral-700);
+		--base-800: var(--color-neutral-800);
+		--base-900: var(--color-neutral-900);
+		--base-950: var(--color-neutral-950);
 	}
 
 	.red {

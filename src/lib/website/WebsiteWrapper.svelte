@@ -13,4 +13,4 @@
 
 {@render children?.()}
 
-<ThemeToggle class="fixed top-2 right-2" />
+<ThemeToggle class="fixed top-2 left-2" />

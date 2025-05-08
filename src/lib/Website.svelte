@@ -4,7 +4,7 @@
 	import MarkdownText from './website/components/MarkdownText.svelte';
 	import PlainText from './website/components/PlainText.svelte';
 	import SingleRecord from './website/components/SingleRecord.svelte';
-	import { Button, buttonVariants, cn, Subheading } from '@fuxui/base';
+	import { Button, cn } from '@fuxui/base';
 	import { base } from '$app/paths';
 	import ThemeWrapper from './website/ThemeWrapper.svelte';
 	import { getContext } from 'svelte';
@@ -12,6 +12,7 @@
 	import Head from './website/Head.svelte';
 	import EditHead from './website/EditHead.svelte';
 	import { parseUri } from './website/data';
+	import { GithubCorner } from '@fuxui/social';
 
 	const did = getContext('did');
 </script>
@@ -27,6 +28,8 @@
 </SingleRecord>
 
 <ThemeWrapper>
+	<GithubCorner href="https://github.com/flo-bit/svelsky" />
+
 	<div class={['mx-auto my-16 max-w-2xl px-4']}>
 		<SingleRecord collection="dev.flo-bit.about" rkey="test">
 			{#snippet child(data)}
