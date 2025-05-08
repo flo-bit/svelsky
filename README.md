@@ -1,5 +1,9 @@
 # Editable Website
 
+Work in progress! Preview only.
+
+https://flo-bit.dev/svelsky/
+
 statically built svelte website using your bluesky pds as a backend with a wysiwyg editor.
 
 ## Development
