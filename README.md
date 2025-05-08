@@ -4,7 +4,18 @@ Work in progress! Preview only.
 
 https://flo-bit.dev/svelsky/
 
-statically built svelte website using your bluesky pds as a backend with a wysiwyg editor.
+Statically built svelte website using your bluesky pds as a backend with a wysiwyg editor.
+
+## Why?
+
+- Statically built websites are fast and super cheap to host (often free on github 
+pages, cloudflare, etc).
+
+- But they are usually hard to edit (for non-technical users), either you edit 
+the code directly or you have to use (and usually pay for) a CMS of some kind.
+
+- This repo aims to combine the best of both worlds: cheap, fast and easy to edit 
+(content editing only, design is static/only changeable by editing code).
 
 ## Development
 
