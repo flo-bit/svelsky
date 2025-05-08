@@ -18,8 +18,8 @@
 
 {#if getContext('isEditing')}
 	{#await import('./PlainTextEditor.svelte') then { default: PlainTextEditor }}
-		<PlainTextEditor class={className} {key} {data} {placeholder} {defaultContent} />
+		<PlainTextEditor class={className} {key} data={data.value} {placeholder} {defaultContent} />
 	{/await}
 {:else}
-	<div class={className}>{data[key] || defaultContent || placeholder}</div>
+	<div class={className}>{data?.value?.[key] || defaultContent || placeholder}</div>
 {/if}

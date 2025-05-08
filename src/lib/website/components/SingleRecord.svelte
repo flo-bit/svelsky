@@ -3,6 +3,7 @@
 	import { getContext, type Snippet } from 'svelte';
 	import EditSingleRecord from './EditSingleRecord.svelte';
 	import { getData, type ElementType, type IndividualCollections } from '../data';
+	import type { Record as ListRecord } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
 
 	let {
 		collection,
@@ -11,7 +12,7 @@
 	}: {
 		collection: IndividualCollections;
 		rkey: ElementType<IndividualCollections>;
-		child: Snippet<[any]>;
+		child: Snippet<[ListRecord]>;
 	} = $props();
 
 	const data = getData();
@@ -29,7 +30,8 @@
 		<EditSingleRecord
 			data={{
 				uri: 'at://' + did + '/' + collection + '/' + rkey,
-				value: {}
+				value: {},
+				cid: ''
 			}}
 		>
 			{#snippet child(recordData)}
@@ -38,5 +40,5 @@
 		</EditSingleRecord>
 	{/await}
 {:else}
-	{@render child(data?.[collection]?.[rkey]?.value)}
+	{@render child(data?.[collection]?.[rkey])}
 {/if}

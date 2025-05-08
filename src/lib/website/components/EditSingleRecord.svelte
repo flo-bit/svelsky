@@ -2,13 +2,14 @@
 	import { onDestroy, onMount, setContext, type Snippet } from 'svelte';
 	import { getUpdateFunctions, parseUri, type UpdateRecordFunction } from '../data';
 	import { putRecord } from '$lib/oauth/atproto';
+	import type { Record as ListRecord } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
 
 	let {
 		data,
 		child
 	}: {
-		data: Record<string, any>;
-		child: Snippet<[any]>;
+		data: ListRecord;
+		child: Snippet<[ListRecord]>;
 	} = $props();
 
 	let updateRecordFunctions: UpdateRecordFunction[] = $state([]);
@@ -48,4 +49,4 @@
 	});
 </script>
 
-{@render child(data.value)}
+{@render child(data)}

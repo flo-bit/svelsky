@@ -29,7 +29,8 @@ const getPDS = async (did: string) => {
 	});
 };
 
-export async function getProfile({ agent, did }: { agent: AtpBaseClient; did: string }) {
+export async function getProfile({ agent, did }: { agent?: AtpBaseClient; did: string }) {
+	agent ??= new AtpBaseClient({ service: 'https://api.bsky.app' });
 	const { data } = await agent.app.bsky.actor.getProfile({ actor: did });
 	return data;
 }
@@ -54,8 +55,20 @@ export async function listRecords({
 		cursor
 	});
 
-	return room.data.records;
+	// convert to { [rkey]: record }
+	const records = room.data.records.reduce(
+		(acc, record) => {
+			acc[parseUri(record.uri).rkey] = record;
+			return acc;
+		},
+		{} as Record<string, ListRecord>
+	);
+
+	return records;
 }
+
+import type { Record as ListRecord } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
+import { parseUri } from '$lib/website/data';
 
 export async function getRecord({
 	did,
@@ -70,13 +83,13 @@ export async function getRecord({
 
 	const agent = new AtpBaseClient({ service: pds });
 
-	const room = await agent.com.atproto.repo.getRecord({
+	const record = await agent.com.atproto.repo.getRecord({
 		repo: did,
 		collection,
 		rkey
 	});
 
-	return room.data;
+	return JSON.parse(JSON.stringify(record.data)) as ListRecord;
 }
 
 export async function putRecord({
@@ -134,4 +147,9 @@ export async function deleteRecord({
 	});
 
 	return response;
+}
+
+export async function getBlob({ did, cid }: { did: string; cid: string }) {
+	const pds = await getPDS(did);
+	return `${pds}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${cid}`;
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Prose } from '@fuxui/base';
+	import { Prose, type ProseSize } from '@fuxui/base';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
 
@@ -8,6 +8,7 @@
 		data,
 		placeholder,
 		defaultContent,
+		size = 'md',
 		class: className
 	}: {
 		key: string;
@@ -15,15 +16,16 @@
 		placeholder?: string;
 		defaultContent?: string;
 		class?: string;
+		size?: ProseSize;
 	} = $props();
 </script>
 
 {#if getContext('isEditing')}
 	{#await import('./MarkdownTextEditor.svelte') then { default: MarkdownTextEditor }}
-		<MarkdownTextEditor class={className} {key} {data} {placeholder} {defaultContent} />
+		<MarkdownTextEditor class={className} {key} data={data.value} {placeholder} {defaultContent} {size} />
 	{/await}
 {:else}
-	<Prose class={className}>
-		{@html marked.parse(data[key] ?? defaultContent ?? ('' as string))}
+	<Prose class={className} size={size}>
+		{@html marked.parse(data?.value?.[key] ?? defaultContent ?? ('' as string))}
 	</Prose>
 {/if}

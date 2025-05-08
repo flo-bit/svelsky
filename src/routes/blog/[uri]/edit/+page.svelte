@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Website from '$lib/Website.svelte';
+	import Blog from '$lib/Blog.svelte';
 	import EditingWebsiteWrapper from '$lib/website/EditingWebsiteWrapper.svelte';
 
 	let { data } = $props();
 </script>
 
 <EditingWebsiteWrapper {data}>
-	<Website />
+	<Blog />
 </EditingWebsiteWrapper>

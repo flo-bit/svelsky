@@ -1,12 +1,17 @@
-import { getRecord, listRecords, resolveHandle } from '$lib/oauth/atproto';
+import { getProfile, getRecord, listRecords, resolveHandle } from '$lib/oauth/atproto';
 import type { Record as ListRecord } from '@atproto/api/dist/client/types/com/atproto/repo/listRecords';
 import { getContext } from 'svelte';
 import { PUBLIC_HANDLE } from '$env/static/public';
 
 // collections and records we want to grab
 export const data = {
-	'dev.flo-bit.about': ['test'],
-	'link.flo-bit.dev': 'all'
+	'app.bsky.actor.profile': ['self'],
+	'dev.flo-bit.about': ['test', 'self'],
+	'dev.flo-bit.theme': ['self'],
+	'link.flo-bit.dev': 'all',
+	'dev.flo-bit.blog.entry': 'all',
+	'dev.flo-bit.blog': ['self'],
+	'dev.flo-bit.head': ['self']
 } as const;
 
 export const handle = 'flo-bit.dev';
@@ -29,9 +34,7 @@ export type ElementType<C extends Collection> = (typeof data)[C] extends readonl
 	? U
 	: unknown;
 
-export type DownloadedData = { [C in IndividualCollections]: Record<string, unknown> } & {
-	[C in ListCollections]: ListRecord[];
-};
+export type DownloadedData = { [C in Collection]: Record<string, ListRecord> };
 
 export function getData(): DownloadedData {
 	return getContext('data');
@@ -39,6 +42,8 @@ export function getData(): DownloadedData {
 
 export async function loadData() {
 	const did = await resolveHandle({ handle: PUBLIC_HANDLE });
+
+	const profile = await getProfile({ did });
 
 	const downloadedData = {} as DownloadedData;
 
@@ -49,18 +54,19 @@ export async function loadData() {
 			if (Array.isArray(cfg)) {
 				for (const rkey of cfg) {
 					const record = await getRecord({ did, collection, rkey });
-					downloadedData[collection as IndividualCollections] ??= {} as Record<string, unknown>;
-					downloadedData[collection as IndividualCollections][rkey] = record;
+					downloadedData[collection] ??= {} as Record<string, ListRecord>;
+					downloadedData[collection][rkey] = record;
 				}
 			} else if (cfg === 'all') {
 				const records = await listRecords({ did, collection });
-				downloadedData[collection as ListCollections] = records;
+				downloadedData[collection] = records;
 			}
 		} catch (error) {
-			console.error(error);
+			console.error('failed getting', collection, cfg);
 		}
 	}
-	return { did, data: downloadedData };
+
+	return { did, data: JSON.parse(JSON.stringify(downloadedData)) as DownloadedData, profile };
 }
 
 export type UpdateFunction = () => boolean | Promise<boolean>;
@@ -73,4 +79,8 @@ export function getUpdateFunctions(): UpdateFunction[] {
 
 export function getUpdateRecordFunctions(): UpdateRecordFunction[] {
 	return getContext('updateRecordFunctions');
+}
+
+export function getCurrent(): { collection: ListCollections; rkey: string } {
+	return getContext('current');
 }

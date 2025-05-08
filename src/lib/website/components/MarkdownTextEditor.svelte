@@ -5,7 +5,7 @@
 	import Image from '@tiptap/extension-image';
 	import Placeholder from '@tiptap/extension-placeholder';
 	import Link from '@tiptap/extension-link';
-	import { Prose } from '@fuxui/base';
+	import { Prose, type ProseSize } from '@fuxui/base';
 	import { marked } from 'marked';
 	import { generateJSON } from '@tiptap/core';
 	import TurndownService from 'turndown';
@@ -18,19 +18,21 @@
 	let loaded = $state(false);
 
 	let edited = $state(false);
-		
+
 	let {
 		key,
 		data,
 		class: className,
 		placeholder = '',
-		defaultContent = ''
+		defaultContent = '',
+		size = 'md'
 	}: {
 		key: string;
 		data: Record<string, any>;
 		class?: string;
 		placeholder?: string;
 		defaultContent?: string;
+		size?: ProseSize;
 	} = $props();
 
 	const updateFunctions = getUpdateRecordFunctions();
@@ -81,12 +83,14 @@
 			Link.configure({
 				openOnClick: false
 			})
-		]
+		];
 
 		if (placeholder) {
-			extensions.push(Placeholder.configure({
-				placeholder: placeholder
-			}));
+			extensions.push(
+				Placeholder.configure({
+					placeholder: placeholder
+				})
+			);
 		}
 
 		editor = new Editor({
@@ -104,7 +108,7 @@
 			editorProps: {
 				attributes: {
 					class:
-						'outline-none prose dark:prose-invert prose-sm prose-a:no-underline prose-a:text-accent-600 dark:prose-a:text-accent-600 prose-pre:rounded-2xl w-full max-w-2xl'
+						'outline-none'
 				}
 			}
 		});
@@ -123,13 +127,9 @@
 	});
 </script>
 
-<Prose class={className}>
+<Prose class={className} size={size}>
 	<div bind:this={element}></div>
 </Prose>
-
-{#if !loaded}
-	<p>Loading...</p>
-{/if}
 
 <style>
 	:global(.tiptap p.is-editor-empty:first-child::before) {

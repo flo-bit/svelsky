@@ -26,10 +26,10 @@
 	{:catch error}
 		{error}
 	{/await}
-{:else if !data[collection] || (data[collection] as unknown[]).length === 0}
+{:else if !data[collection] || Object.keys(data[collection]).length === 0}
 	{@render empty?.()}
 {:else}
-	{#each data[collection] as itemData}
-		{@render item(itemData.value, () => {})}
+	{#each Object.values(data[collection]) as itemData}
+		{@render item(itemData, () => {})}
 	{/each}
 {/if}

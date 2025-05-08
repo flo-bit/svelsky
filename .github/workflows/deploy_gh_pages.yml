@@ -12,21 +12,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.6
+  
+      - name: Setup Node.js environment
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: npm
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
           PUBLIC_HANDLE: 'flo-bit.dev'
         run: |
-          npm run build
+          pnpm run build
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
