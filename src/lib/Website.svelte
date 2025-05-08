@@ -11,6 +11,7 @@
 	import Profile from './Profile.svelte';
 	import Head from './website/Head.svelte';
 	import EditHead from './website/EditHead.svelte';
+	import { parseUri } from './website/data';
 
 	const did = getContext('did');
 </script>
@@ -66,7 +67,7 @@
 			{/snippet}
 		</SingleRecord>
 
-		<div class="relative mt-6 flex flex-col gap-4 group">
+		<div class="group relative mt-6 flex flex-col gap-4">
 			<List collection="dev.flo-bit.blog.entry">
 				{#snippet item(data, deleteItem)}
 					<div class="relative mt-2 flex flex-col gap-2 p-2">
@@ -120,8 +121,7 @@
 								class="absolute top-0 right-0 z-10"
 								size="icon"
 								variant="ghost"
-								href={base + '/blog/' + encodeURIComponent(data.uri) + '/edit'}
-								target="_blank"
+								href={base + '/blog/' + parseUri(data.uri).rkey + '/edit'}
 							>
 								<span class="sr-only">edit</span>
 								<svg
@@ -140,16 +140,15 @@
 							</Button>
 						{:else}
 							<a
-								href={base + '/blog/' + encodeURIComponent(data.uri)}
-								target="_blank"
+								href={base + '/blog/' + parseUri(data.uri).rkey}
 								class="hover:bg-base-200/30 dark:hover:bg-base-800/20 absolute -inset-2 rounded-2xl"
 							>
 								<span class="sr-only">
 									{data.title}
-								</span></a
-							>
+								</span>
+							</a>
 
-							<a class="hidden" href={base + '/blog/' + encodeURIComponent(data.uri) + '/edit'}>
+							<a class="hidden" href={base + '/blog/' + parseUri(data.uri).rkey + '/edit'}>
 								<span class="sr-only">edit</span>
 							</a>
 						{/if}
@@ -179,11 +178,10 @@
 		</div>
 
 		<div class="mt-16 flex flex-col gap-4">
-
 			<SingleRecord collection="dev.flo-bit.about" rkey="self">
 				{#snippet child(data)}
 					<PlainText
-					class="text-base-900 dark:text-base-50 text-xl font-semibold sm:text-2xl"
+						class="text-base-900 dark:text-base-50 text-xl font-semibold sm:text-2xl"
 						key="title"
 						defaultContent="About me"
 						{data}

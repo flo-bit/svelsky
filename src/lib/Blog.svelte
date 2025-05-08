@@ -26,7 +26,7 @@
 		<SingleRecord {collection} {rkey}>
 			{#snippet child(data)}
 				<div class="text-base-800 dark:text-base-200 text-xs">
-					{new Date(data.value.createdAt || new Date()).toLocaleDateString('en-us', {
+					{new Date(data?.value?.createdAt || new Date()).toLocaleDateString('en-us', {
 						year: 'numeric',
 						month: 'short',
 						day: 'numeric'
