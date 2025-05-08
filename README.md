@@ -5,6 +5,29 @@ statically built svelte website using your bluesky pds as a backend with a wysiw
 ## Development
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
+
+## Deployment with github pages
+
+1. fork the repo and enable github pages in the repo settings (Settings -> Pages -> Source -> Github Actions)
+
+2. change the handle to your bluesky handle in `.github/workflows/deploy.yml` line 32:
+
+```bash
+PUBLIC_HANDLE: 'your-bluesky-handle'
+```
+
+3. change the base path to your repo name in `svelte.config.js` line 13:
+
+```ts
+base: process.env.NODE_ENV === 'development' ? '' : '/svelsky'
+```
+
+4. push to github and wait for it to deploy
+
+5. edit the website by going to `https://<your-github-username>.github.io/<repo-name>/edit`, 
+signing in with your bluesky account, editing the website and saving at the end.
+
+6. rerun the workflow manually by clicking the `Run workflow` button in the github actions tab.
